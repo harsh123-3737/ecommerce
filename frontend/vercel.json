@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://my-backend-zkv5.onrender.com/api/:path*"
+    }
+  ]
+}

@@ -10,7 +10,8 @@ import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   return (
-    <div className="hidden fixed md:block border-r bg-pink-50 border-pink-200 x-10 w-[300px] p-10 space-y-2 h-screen">
+    <div className="fixed border-r bg-pink-50 border-pink-200 w-[300px] p-10 space-y-2 h-screen">
+
       <div className="text-center px-3 space-y-2">
         <NavLink
           to="/dashboard/sales"

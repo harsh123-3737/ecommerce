@@ -17,7 +17,6 @@ function FilterSidebar({
   const Categories = allProducts.map((p) => p.category);
   const UniqueCategory = ["All", ...new Set(Categories)];
 
-
   const Brands = allProducts.map((p) => p.brand);
   const UniqueBrand = ["All", ...new Set(Brands)];
   console.log(UniqueBrand);
@@ -46,7 +45,7 @@ function FilterSidebar({
     setPriceRange([0, 1000]);
   };
   return (
-    <div className="bg-gray-100 mt-10 p-4 rounded-md h-max hidden md:block w-64">
+    <div className="bg-gray-100 mt-10 p-4 rounded-md h-max w-64">
       {/* Search */}
       <Input
         type="text"

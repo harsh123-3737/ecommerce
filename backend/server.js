@@ -17,12 +17,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://my-frontend-ecofrindly.vercel.app",
-      "https://ecommerce-three-zeta-53.vercel.app",
+      /\.vercel\.app$/, // allow all Vercel preview + production URLs
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"], // Add this
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 

@@ -30,6 +30,10 @@ app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/orders", orderRoute);
 //http://localhost:10000/api/v1/user/register
 app.use(express.urlencoded({ extended: true }));
+app.get("/", (req, res) => {
+  res.send("Backend API is running...");
+});
+
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server is running on port ${PORT}`);

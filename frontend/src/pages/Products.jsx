@@ -29,7 +29,7 @@ function Products() {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:10000/api/v1/product/getallproducts`,
+        `${import.meta.env.VITE_URL}/product/getallproducts`,
       );
       console.log("Backend URL in build:", import.meta.env.VITE_URL);
 

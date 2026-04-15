@@ -40,7 +40,7 @@ function Signup() {
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:10000/api/v1/user/register`,
+        `${import.meta.env.VITE_URL}/user/register`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,

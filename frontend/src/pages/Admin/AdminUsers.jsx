@@ -13,14 +13,11 @@ function AdminUsers() {
   const getAllUsers = async () => {
     const accessToken = localStorage.getItem("accessToken");
     try {
-      const res = await axios.get(
-        "http://localhost:10000/api/v1/user/all-user",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const res = await axios.get("${import.meta.env.VITE_URL}/user/all-user", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
       if (res.data.success) {
         setUsers(res.data.users);
       }

@@ -56,7 +56,7 @@ function AddressForm() {
     const accessToken = localStorage.getItem("accessToken");
     try {
       const { data } = await axios.post(
-        `http://localhost:10000/api/v1/orders/create-order`,
+        `${import.meta.env.VITE_URL}/orders/create-order`,
         {
           products: cart?.items?.map((item) => ({
             productId: item.productId._id,
@@ -88,7 +88,7 @@ function AddressForm() {
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(
-              `http://localhost:10000/api/v1/orders/verify-payment`,
+              `${import.meta.env.VITE_URL}/orders/verify-payment`,
               response,
               {
                 headers: {
@@ -111,7 +111,7 @@ function AddressForm() {
           ondismiss: async function () {
             //Handle user closing the pop-up
             await axios.post(
-              `http://localhost:10000/api/v1/orders/verify-payment`,
+              `${import.meta.env.VITE_URL}/orders/verify-payment`,
               {
                 razorpay_order_id: data.order.id,
                 paymentFailed: true,
@@ -137,7 +137,7 @@ function AddressForm() {
       //listen for payment failure
       rzp.on("payment.failed", async function (response) {
         await axios.post(
-          `http://localhost:10000/api/v1/orders/verify-payment`,
+          `${import.meta.env.VITE_URL}/orders/verify-payment`,
           {
             razorpay_order_id: data.order.id,
             paymentFailed: true,

@@ -58,7 +58,7 @@ function ResetPassword() {
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:10000/api/v1/user/change-password/${email}`,
+        `${import.meta.env.VITE_URL}/user/change-password/${email}`,
         {
           newPassword: formData.newPassword,
           confirmPassword: formData.confirmPassword,

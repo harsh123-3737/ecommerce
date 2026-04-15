@@ -22,14 +22,11 @@ function AdminSales() {
   const fetchStats = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const res = await axios.get(
-        `http://localhost:10000/api/v1/orders/sales`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const res = await axios.get(`${import.meta.env.VITE_URL}/orders/sales`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
       if (res.data.success) {
         setStats(res.data);

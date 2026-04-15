@@ -10,7 +10,7 @@ function VerifyEmail() {
   const verifyEmail = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:10000/api/v1/user/verify`,
+        `${import.meta.env.VITE_URL}/user/verify`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );

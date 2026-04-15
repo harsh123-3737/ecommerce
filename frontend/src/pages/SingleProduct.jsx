@@ -25,7 +25,7 @@ function SingleProduct() {
         // 2. If Redux is empty (Array 0), fetch directly from API
         try {
           const response = await axios.get(
-            `http://localhost:10000/api/v1/products/${productId}`,
+            `${import.meta.env.VITE_URL}/products/${productId}`,
           );
           if (response.data.success) {
             setLocalProduct(response.data.product);

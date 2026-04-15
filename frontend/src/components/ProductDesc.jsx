@@ -12,7 +12,7 @@ function ProductDesc({ product }) {
   const addToCart = async (productId) => {
     try {
       const res = await axios.post(
-        `http://localhost:10000/api/v1/cart/add`,
+        `${import.meta.env.VITE_URL}/cart/add`,
         { productId },
         {
           headers: {

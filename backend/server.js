@@ -29,7 +29,7 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/orders", orderRoute);
-//http://localhost:10000/api/v1/user/register
+//${import.meta.env.VITE_URL}/user/register
 app.get("/", (req, res) => {
   res.send("Backend API is running...");
 });

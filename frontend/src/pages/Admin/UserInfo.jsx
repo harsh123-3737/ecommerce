@@ -53,7 +53,7 @@ function UserInfo() {
       }
 
       const response = await axios.put(
-        `http://localhost:10000/api/v1/user/update/${userId}`,
+        `${import.meta.env.VITE_URL}/user/update/${userId}`,
         formData,
         {
           headers: {
@@ -79,7 +79,7 @@ function UserInfo() {
   const getUserDetails = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:10000/api/v1/user/get-user/${userId}`,
+        `${import.meta.env.VITE_URL}/user/get-user/${userId}`,
       );
       if (res.data.success) {
         setUpdateUser(res.data.user);

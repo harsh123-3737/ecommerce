@@ -13,7 +13,7 @@ function ShowUserOrders() {
     console.log("Access token exists:", !!accessToken);
 
     const res = await axios.get(
-      `http://localhost:10000/api/v1/orders/user-order/${params.userId}`,
+      `${import.meta.env.VITE_URL}/orders/user-order/${params.userId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

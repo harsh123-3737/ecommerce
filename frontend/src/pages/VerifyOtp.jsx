@@ -38,7 +38,7 @@ function VerifyOtp() {
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:10000/api/v1/user/verify-otp`,
+        `${import.meta.env.VITE_URL}/user/verify-otp`,
         { email, otp },
       );
       if (res.data.success) {
@@ -63,7 +63,7 @@ function VerifyOtp() {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:10000/api/v1/user/forgot-password",
+        "${import.meta.env.VITE_URL}/user/forgot-password",
         { email },
       );
       if (res.data.success) {

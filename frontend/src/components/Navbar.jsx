@@ -46,8 +46,8 @@ function Navbar() {
   };
   console.log(cart);
   return (
-    <header className="bg-pink-50 sticky w-full z-20 border-b border-pink-200">
-      <div className="max-w-7xl mx-auto flex justify-between items-center py-3">
+    <header className="bg-pink-50 sticky top-0 w-full z-20 border-b border-pink-200">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
         {/* {"Logo Section"} */}
         <div>
           <img src="/logo.png" alt="" className="w-[100px]" />

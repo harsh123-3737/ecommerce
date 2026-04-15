@@ -40,7 +40,7 @@ function AdminSales() {
     fetchStats();
   }, []);
   return (
-    <div className="pl-[350px] bg-gray-100 py-20 pr-20 mx-auto px-4">
+    <div className="md:pl-[350px] bg-gray-100 py-20 pr-20 mx-auto px-4">
       <div className="p-6 grid gap-6 lg:grid-cols-4">
         {/* statescard */}
         <Card className="bg-pink-500 text-white shadow">

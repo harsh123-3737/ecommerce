@@ -78,7 +78,7 @@ function Products() {
   console.log(allProducts);
   return (
     <div className="pt-20 pb-10">
-      <div className="max-w-7xl mx-auto flex gap-7">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-7">
         {/* Sidebar */}
         <div className="hidden md:block">
           <FilterSidebar

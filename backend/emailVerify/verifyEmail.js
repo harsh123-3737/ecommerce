@@ -26,6 +26,14 @@ export const verifyEmail = (token, email) => {
            Please follow the given link to verify your email
             ${process.env.FRONTEND_URL}/verify/${token} 
            Thanks`,
+    html: `
+    <p>Hi! There, You have recently visited our website and entered your email.</p>
+    <p>Please click the link below to verify your email:</p>
+    <a href="${process.env.FRONTEND_URL}/verify/${token}" style="color:blue; text-decoration:underline;">
+      Verify Email
+    </a>
+    <p>Thanks</p>
+    `,
   };
 
   transporter.sendMail(mailConfigurations, function (error, info) {

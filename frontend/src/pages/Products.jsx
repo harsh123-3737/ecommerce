@@ -24,6 +24,7 @@ function Products() {
   const [brand, setBrand] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortOrder, setSortOrder] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const dispatch = useDispatch();
   const getAllProducts = async () => {
     try {
@@ -79,17 +80,41 @@ function Products() {
     <div className="pt-20 pb-10">
       <div className="max-w-7xl mx-auto flex gap-7">
         {/* Sidebar */}
-        <FilterSidebar
-          search={search}
-          setSearch={setSearch}
-          brand={brand}
-          setBrand={setBrand}
-          category={category}
-          setCategory={setCategory}
-          allProducts={allProducts}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-        />
+        <div className="hidden md:block">
+          <FilterSidebar
+            search={search}
+            setSearch={setSearch}
+            brand={brand}
+            setBrand={setBrand}
+            category={category}
+            setCategory={setCategory}
+            allProducts={allProducts}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+          />
+        </div>
+        {/* Mobile Filter Toggle */}
+        <div className="md:hidden mb-4">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="bg-pink-600 text-white px-4 py-2 rounded"
+          >
+            {showFilters ? "Hide Filters" : "Show Filters"}
+          </button>
+          {showFilters && (
+            <FilterSidebar
+              search={search}
+              setSearch={setSearch}
+              brand={brand}
+              setBrand={setBrand}
+              category={category}
+              setCategory={setCategory}
+              allProducts={allProducts}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+            />
+          )}
+        </div>
         {/* Main product section */}
         <div className="flex flex-col flex-1">
           <div className="flex justify-end mb-4">

@@ -17,6 +17,8 @@ function Navbar() {
   const dispatch = useDispatch();
   const accessToken = localStorage.getItem("accessToken");
   const admin = user?.role === "admin" ? true : false;
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   useEffect(() => {
     console.log("REDUX USER STATE:", user);
@@ -52,9 +54,32 @@ function Navbar() {
         <div>
           <img src="/logo.png" alt="" className="w-[100px]" />
         </div>
+        {/* Hamburger toggle (mobile only) */}
+        <button
+          onClick={toggleMenu}
+          className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+        >
+          <svg
+            className="w-6 h-6 text-gray-800"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
         {/* nav Section */}
-        <nav className="flex gap-10 justify-between items-center">
-          <ul className="flex gap-7 items-center text-xl font-semibold">
+        <nav
+          className={`${
+            isOpen ? "block" : "hidden"
+          } md:flex gap-10 items-center`}
+        >
+          <ul className="flex flex-col md:flex-row gap-7 items-center text-xl font-semibold">
             <Link to={"/"}>
               <li>Home</li>
             </Link>

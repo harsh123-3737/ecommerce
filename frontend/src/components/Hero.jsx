@@ -32,7 +32,7 @@ function Hero() {
               alt=""
               width={500}
               height={400}
-              className="rounded-lg shadow-[0_15px_40px_rgba(0,0,0,0.5)] object-contain mt-4 transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+              className="w-full max-w-md rounded-lg shadow-[0_15px_40px_rgba(0,0,0,0.5)] object-contain mt-4 transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
             />
           </div>
         </div>

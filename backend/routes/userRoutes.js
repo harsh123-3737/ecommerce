@@ -19,6 +19,7 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/verify", verify);
+router.get("/verify/:token", verify);
 router.post("/reverify", reVerify);
 router.post("/login", login);
 router.post("/logout", isAuthenticated, logout);

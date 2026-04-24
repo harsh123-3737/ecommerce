@@ -11,7 +11,7 @@ function VerifyEmail() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_URL}/user/verify`,
-        {},
+        { token },
         { headers: { Authorization: `Bearer ${token}` } },
       );
       if (res.data.success || res.data.sucess) {

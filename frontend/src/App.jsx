@@ -78,7 +78,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/verify/:token",
+    path: "/verify",
     element: (
       <>
         <Verify />

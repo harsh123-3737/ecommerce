@@ -1,6 +1,5 @@
 import FilterSidebar from "@/components/FilterSidebar";
 import React, { useEffect, useState } from "react";
-
 import {
   Select,
   SelectContent,
@@ -26,6 +25,7 @@ function Products() {
   const [sortOrder, setSortOrder] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const dispatch = useDispatch();
+
   const getAllProducts = async () => {
     try {
       setLoading(true);
@@ -40,11 +40,12 @@ function Products() {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error fetching products");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (allProducts.length === 0) return;
 
@@ -71,15 +72,15 @@ function Products() {
     }
     dispatch(SetProducts(filtered));
   }, [search, category, brand, sortOrder, priceRange, allProducts, dispatch]);
+
   useEffect(() => {
     getAllProducts();
   }, []);
 
-  console.log(allProducts);
   return (
     <div className="pt-20 pb-10">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-7">
-        {/* Sidebar */}
+        {/* Desktop Sidebar */}
         <div className="hidden md:block">
           <FilterSidebar
             search={search}
@@ -93,30 +94,33 @@ function Products() {
             setPriceRange={setPriceRange}
           />
         </div>
-        {/* Mobile Filter Toggle */}
-        <div className="md:hidden mb-4">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="bg-pink-600 text-white px-4 py-2 rounded"
-          >
-            {showFilters ? "Hide Filters" : "Show Filters"}
-          </button>
-          {showFilters && (
-            <FilterSidebar
-              search={search}
-              setSearch={setSearch}
-              brand={brand}
-              setBrand={setBrand}
-              category={category}
-              setCategory={setCategory}
-              allProducts={allProducts}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-            />
-          )}
-        </div>
+
         {/* Main product section */}
         <div className="flex flex-col flex-1">
+          {/* Mobile Filter Toggle */}
+          <div className="md:hidden mb-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="bg-pink-600 text-white px-4 py-2 rounded"
+            >
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </button>
+            {showFilters && (
+              <FilterSidebar
+                search={search}
+                setSearch={setSearch}
+                brand={brand}
+                setBrand={setBrand}
+                category={category}
+                setCategory={setCategory}
+                allProducts={allProducts}
+                priceRange={priceRange}
+                setPriceRange={setPriceRange}
+              />
+            )}
+          </div>
+
+          {/* Sort dropdown */}
           <div className="flex justify-end mb-4">
             <Select onValueChange={(value) => setSortOrder(value)}>
               <SelectTrigger className="w-[200px]">
@@ -130,17 +134,16 @@ function Products() {
               </SelectContent>
             </Select>
           </div>
-          {/* product grid */}
+
+          {/* Product grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7">
-            {products.map((product) => {
-              return (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                  loading={loading}
-                />
-              );
-            })}
+            {products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                loading={loading}
+              />
+            ))}
           </div>
         </div>
       </div>

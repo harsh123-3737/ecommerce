@@ -1,6 +1,6 @@
 import { ShoppingBag } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/Button";
 import axios from "axios";

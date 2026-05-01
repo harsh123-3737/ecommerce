@@ -39,7 +39,7 @@ export const verifyEmail = (token, email) => {
   transporter.sendMail(mailConfigurations, function (error, info) {
     if (error) {
       console.error("Email error:", error);
-      return;
+      return; // don’t crash the process
     }
     console.log("Email Sent Successfully");
     console.log(info);

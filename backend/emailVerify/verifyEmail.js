@@ -26,11 +26,6 @@ export const verifyEmail = (token, email) => {
     subject: "Email Verification",
 
     // This would be the text of email body
-    text: `Hi! There, You have recently visited 
-           our website and entered your email.
-           Please follow the given link to verify your email
-            ${process.env.FRONTEND_URL}/verify/${token} 
-           Thanks`,
     html: `
     <p>Hi! There, You have recently visited our website and entered your email.</p>
     <p>Please click the link below to verify your email:</p>

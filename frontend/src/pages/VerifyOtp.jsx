@@ -63,7 +63,7 @@ function VerifyOtp() {
     try {
       setLoading(true);
       const res = await axios.post(
-        "${import.meta.env.VITE_URL}/user/forgot-password",
+        `${import.meta.env.VITE_URL}/user/forgot-password`,
         { email },
       );
       if (res.data.success) {

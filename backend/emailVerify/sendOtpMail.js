@@ -10,7 +10,7 @@ export const sendOtpMail = (otp, email) => {
     secure: true,
     auth: {
       user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      pass: process.env.MAIL_PASS, // must be Gmail App Password
     },
     tls: {
       family: 4, // force IPv4

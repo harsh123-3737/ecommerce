@@ -4,18 +4,18 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const verifyEmail = (token, email) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // true for port 465
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-    tls: {
-      family: 4, // force IPv4, avoids ENETUNREACH
-    },
-  });
+ const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS, // must be Gmail App Password
+  },
+  tls: {
+    family: 4, // force IPv4
+  },
+});
 
   const mailConfigurations = {
     from: process.env.MAIL_USER,

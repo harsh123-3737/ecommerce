@@ -7,9 +7,14 @@ export const verifyEmail = (token, email) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false,
-    auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
-    tls: { family: 4 },
+    secure: false, // STARTTLS
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+    tls: {
+      family: 4, // force IPv4
+    },
     connectionTimeout: 10000, // 10 seconds
   });
 

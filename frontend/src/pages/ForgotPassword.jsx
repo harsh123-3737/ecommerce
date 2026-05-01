@@ -29,9 +29,10 @@ function ForgotPassword() {
     try {
       setLoading(true);
       const res = await axios.post(
-        "${import.meta.env.VITE_URL}/user/forgot-password",
+        `${import.meta.env.VITE_URL}/user/forgot-password`,
         { email },
       );
+
       if (res.data.success) {
         toast.success(res.data.message);
         // Store email to use in OTP verification

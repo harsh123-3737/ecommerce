@@ -5,30 +5,25 @@ dotenv.config();
 
 export const sendOtpMail = (otp, email) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    service: "gmail",
     auth: {
       user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS, // must be Gmail App Password
-    },
-    tls: {
-      family: 4, // force IPv4
+      pass: process.env.MAIL_PASS,
     },
   });
 
   const mailConfigurations = {
     from: process.env.MAIL_USER,
+
     to: email,
-    subject: "Password Reset OTP",
-    html: `<p>Your OTP for password reset is <b>${otp}</b></p>`,
+    // Subject of Email
+    subject: "Email Verification",
+    // This would be the text of email body
+    html: `<p>Your Otp for Password reset is <b>${otp}</b></p>`,
   };
 
   transporter.sendMail(mailConfigurations, function (error, info) {
-    if (error) {
-      console.error("OTP email error:", error);
-      return;
-    }
+    if (error) throw Error(error);
     console.log("OTP Sent Successfully");
     console.log(info);
   });

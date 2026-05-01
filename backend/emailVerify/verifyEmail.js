@@ -5,32 +5,42 @@ dotenv.config();
 
 export const verifyEmail = (token, email) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // Must be false for port 587
     auth: {
       user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      pass: process.env.MAIL_PASS, // Ensure this is a 16-character App Password
     },
+    tls: {
+      rejectUnauthorized: false, // Prevents "Self-signed certificate" blocks on cloud servers
+    },
+    connectionTimeout: 10000, // Wait 10s before timing out
   });
 
   const mailConfigurations = {
-    from: process.env.MAIL_USER,
-
+    from: `"EcoFriendly Support" <${process.env.MAIL_USER}>`,
     to: email,
-
-    // Subject of Email
-    subject: "Email Verification",
-
-    // This would be the text of email body
-    text: `Hi! There, You have recently visited 
-           our website and entered your email.
-           Please follow the given link to verify your email
-            ${process.env.FRONTEND_URL}/verify/${token} 
-           Thanks`,
+    subject: "Verify Your EcoFriendly Account",
+    text: `Hi! There, 
+    
+    Thank you for joining our eco-friendly community! 
+    Please click the link below to verify your email address:
+    
+    ${process.env.FRONTEND_URL}/verify/${token}
+    
+    If you did not request this, please ignore this email.
+    
+    Thanks,
+    The EcoFriendly Team`,
   };
 
-  transporter.sendMail(mailConfigurations, function (error, info) {
-    if (error) throw Error(error);
-    console.log("Email Sent Successfully");
-    console.log(info);
+  // Using a promise-based approach is cleaner for modern Node.js
+  transporter.sendMail(mailConfigurations, (error, info) => {
+    if (error) {
+      console.error("Nodemailer Error:", error.message);
+      return;
+    }
+    console.log("Verification Email Sent: " + info.response);
   });
 };

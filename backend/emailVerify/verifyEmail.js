@@ -3,39 +3,42 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const verifyEmail = async (token, email) => {
+export const verifyEmail = (token, email) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.resend.com",
-    port: 465,
-    secure: true,
+    service: "gmail",
     auth: {
-      user: "resend",
-      pass: process.env.RESEND_API_KEY,
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS, // Ensure this is a 16-character App Password
     },
+    tls: {
+      rejectUnauthorized: false, // Prevents "Self-signed certificate" blocks on cloud servers
+    },
+    connectionTimeout: 30000, // Wait 30s before timing out
   });
 
   const mailConfigurations = {
-    // IMPORTANT: Resend requires 'onboarding@resend.dev' for free accounts
-    from: "EcoFriendly Support <onboarding@resend.dev>",
+    from: `"EcoFriendly Support" <${process.env.MAIL_USER}>`,
     to: email,
     subject: "Verify Your EcoFriendly Account",
-    html: `
-      <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
-        <h2>Welcome to EcoFriendly!</h2>
-        <p>Please click the button below to verify your email address and start shopping sustainably.</p>
-        <a href="${process.env.FRONTEND_URL}/verify/${token}" 
-           style="background-color: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-           Verify Email
-        </a>
-      </div>
-    `,
+    text: `Hi! There, 
+    
+    Thank you for joining our eco-friendly community! 
+    Please click the link below to verify your email address:
+    
+    ${process.env.FRONTEND_URL}/verify/${token}
+    
+    If you did not request this, please ignore this email.
+    
+    Thanks,
+    The EcoFriendly Team`,
   };
 
-  try {
-    await transporter.sendMail(mailConfigurations);
-    console.log("Verification Email Sent Successfully via Resend");
-  } catch (error) {
-    // If you see "Forbidden" error, it's because the 'from' address isn't onboarding@resend.dev
-    console.error("Resend Error:", error.message);
-  }
+  // Using a promise-based approach is cleaner for modern Node.js
+  transporter.sendMail(mailConfigurations, (error, info) => {
+    if (error) {
+      console.error("Nodemailer Error:", error.message);
+      return;
+    }
+    console.log("Verification Email Sent: " + info.response);
+  });
 };

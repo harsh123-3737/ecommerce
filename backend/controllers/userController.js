@@ -236,11 +236,11 @@ export const logout = async (req, res) => {
     });
   }
 };
+
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
-
     if (!user) {
       return res
         .status(400)
@@ -248,21 +248,21 @@ export const forgotPassword = async (req, res) => {
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
     user.otp = otp;
     user.otpExpiry = otpExpiry;
-    await user.save();
+    await user.save(); // WRAP THIS IN TRY-CATCH
 
-    // 🚀 OPTIMIZATION: Send response immediately so the frontend "Loading" stops.
-    // The email will send in the background.
-    sendOtpMail(otp, email).catch((err) =>
-      console.error("Background Email Error:", err.message),
-    );
+    try {
+      await sendOtpMail(otp, email);
+    } catch (emailError) {
+      console.error("Email service failed:", emailError.message); // We still return 200 because the OTP is saved, but we warn the dev
+    }
 
     return res.status(200).json({
       success: true,
-      message: "OTP sent to your email successfully",
+      message: "OTP Sent to email successfully",
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -284,22 +284,19 @@ export const verifyOtp = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "User not found" });
-    }
+    } // Check if OTP exists and is not expired
 
-    // Check if OTP exists and is not expired
     if (!user.otp || !user.otpExpiry || user.otpExpiry < new Date()) {
       return res.status(400).json({
         success: false,
         message: "OTP has expired or is invalid. Please request a new one.",
       });
-    }
+    } // Use toString() to ensure type matching
 
-    // Ensure type matching for verification
     if (otp.toString() !== user.otp.toString()) {
       return res.status(400).json({ success: false, message: "Invalid OTP" });
-    }
+    } // Success: Clear OTP fields
 
-    // Success: Clear OTP fields so it can't be used again
     user.otp = null;
     user.otpExpiry = null;
     await user.save();
@@ -312,43 +309,41 @@ export const verifyOtp = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
 export const changePassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword } = req.body;
-    const { email } = req.params; // Make sure your route is /change-password/:email
-
-    if (!newPassword || !confirmPassword) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
-    }
-
-    if (newPassword !== confirmPassword) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Passwords do not match" });
-    }
-
+    const { email } = req.params;
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
     }
-
-    // Hash the new password
+    if (!newPassword || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Password do not match",
+      });
+    }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
-
     await user.save();
-
     return res.status(200).json({
       success: true,
-      message: "Password changed successfully. You can now login.",
+      message: "Password changed Successfully",
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

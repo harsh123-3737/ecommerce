@@ -1,29 +1,30 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// Initialize Resend with your API Key
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const sendOtpMail = (otp, email) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
 
-export const sendOtpMail = async (otp, email) => {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: "EcoFriendly Support <onboarding@resend.dev>",
-      to: email, // Remember: On free tier, this must be your own email!
-      subject: "Your OTP Code - EcoFriendly",
-      html: `<strong>Your verification code is: ${otp}</strong>`,
-    });
+  const mailConfigurations = {
+    from: process.env.MAIL_USER,
 
-    if (error) {
-      console.error("Resend API Error:", error.message);
-      return false;
-    }
+    to: email,
+    // Subject of Email
+    subject: "Email Verification",
+    // This would be the text of email body
+    html: `<p>Your Otp for Password reset is <b>${otp}</b></p>`,
+  };
 
-    console.log("Email sent successfully via API:", data.id);
-    return true;
-  } catch (err) {
-    console.error("Critical Resend Failure:", err.message);
-    return false;
-  }
+  transporter.sendMail(mailConfigurations, function (error, info) {
+    if (error) throw Error(error);
+    console.log("OTP Sent Successfully");
+    console.log(info);
+  });
 };

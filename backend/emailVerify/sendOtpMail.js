@@ -6,22 +6,17 @@ dotenv.config();
 export const sendOtpMail = async (otp, email) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 587,
+    port: 2525, // Change from 587 to 2525
     secure: false,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
     },
-    // 1. Force IPv4 to prevent ENETUNREACH
     family: 4,
-    // 2. Increase timeouts significantly for Render's slow cold-starts
-    connectionTimeout: 20000, // 20 seconds
-    greetingTimeout: 20000,
-    socketTimeout: 20000,
-    // 3. Prevent SSL certificate issues on cloud clusters
+    connectionTimeout: 30000, // Increase to 30s
+    greetingTimeout: 30000,
     tls: {
       rejectUnauthorized: false,
-      minVersion: "TLSv1.2",
     },
   });
 

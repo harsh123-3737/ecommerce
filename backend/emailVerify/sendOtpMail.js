@@ -2,37 +2,47 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
-// 1. Use explicit host and port instead of 'service'
+
 export const sendOtpMail = async (otp, email) => {
   const transporter = nodemailer.createTransport({
-    // 1. Use the direct IPv4 for Google's SMTP instead of the hostname
-    host: "74.125.142.108",
-    port: 587,
-    secure: false,
+    host: "smtp.resend.com",
+    port: 465,
+    secure: true, // Use SSL
     auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      user: "resend", // Must stay as the string "resend"
+      pass: process.env.RESEND_API_KEY,
     },
-    // 2. THIS IS THE KEY: Force IPv4 and provide the server name for TLS
-    family: 4,
-    tls: {
-      rejectUnauthorized: false,
-      servername: "smtp.gmail.com", // Required when using a direct IP
-    },
-    connectionTimeout: 20000,
   });
 
   const mailConfigurations = {
-    from: `"EcoFriendly" <${process.env.MAIL_USER}>`,
+    // CRITICAL: Resend requires this specific 'from' address for free accounts
+    from: "EcoFriendly Support <onboarding@resend.dev>",
     to: email,
-    subject: "Your OTP Code",
-    html: `<b>${otp}</b> is your verification code.`,
+    subject: "Reset Your Password - EcoFriendly",
+    html: `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px;">
+        <h2 style="color: #10b981; text-align: center;">EcoFriendly Security</h2>
+        <p>Hello,</p>
+        <p>You requested a password reset. Please use the following One-Time Password (OTP) to proceed. This code is valid for 10 minutes.</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1f2937; background: #f3f4f6; padding: 10px 20px; border-radius: 5px;">
+            ${otp}
+          </span>
+        </div>
+        <p style="font-size: 12px; color: #6b7280; text-align: center;">
+          If you did not request this, please ignore this email or contact support.
+        </p>
+      </div>
+    `,
   };
 
   try {
-    await transporter.sendMail(mailConfigurations);
-    console.log("OTP Sent via IPv4 Direct!");
+    const info = await transporter.sendMail(mailConfigurations);
+    console.log("OTP Sent Successfully via Resend: " + info.messageId);
+    return true;
   } catch (error) {
-    console.error("Final Debug Error:", error.message);
+    // If this fails, check if 'email' is the same as your Resend signup email
+    console.error("Resend OTP Error:", error.message);
+    return false;
   }
 };

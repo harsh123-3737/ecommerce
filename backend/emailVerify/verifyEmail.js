@@ -13,7 +13,11 @@ export const verifyEmail = async (token, email) => {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
     },
-    tls: { rejectUnauthorized: false },
+    // FORCE IPV4 HERE
+    family: 4,
+    tls: {
+      rejectUnauthorized: false,
+    },
     connectionTimeout: 10000,
   });
 

@@ -2,21 +2,22 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+// 1. Use explicit host and port instead of 'service'
 export const sendOtpMail = async (otp, email) => {
-  // 1. Use explicit host and port instead of 'service'
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false, // Must be false for 587
+    secure: false,
     auth: {
       user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS, // Your 16-character App Password
+      pass: process.env.MAIL_PASS,
     },
+    // FORCE IPV4 HERE
+    family: 4,
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 10000, // 10 seconds
+    connectionTimeout: 10000,
   });
 
   const mailConfigurations = {

@@ -37,9 +37,9 @@ function VerifyOtp() {
 
     try {
       setLoading(true);
-      const res = await axios.get(
+      const res = await axios.post(
         `${import.meta.env.VITE_URL}/user/verify-otp`,
-        { params: { email, otp } },
+        { email, otp },
       );
       if (res.data.success) {
         toast.success(res.data.message);
@@ -62,9 +62,9 @@ function VerifyOtp() {
 
     try {
       setLoading(true);
-      const res = await axios.get(
+      const res = await axios.post(
         `${import.meta.env.VITE_URL}/user/forgot-password`,
-        { params: { email } },
+        { email },
       );
       if (res.data.success) {
         toast.success("New OTP sent to your email");

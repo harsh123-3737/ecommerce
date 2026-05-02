@@ -5,16 +5,18 @@ dotenv.config();
 
 export const sendOtpMail = (otp, email) => {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
     },
+    tls: { rejectUnauthorized: false },
+    connectionTimeout: 10000,
   });
-
   const mailConfigurations = {
-    from: process.env.MAIL_USER,
-
+    from: `"EcoFriendly Support" <${process.env.MAIL_USER}>`, // Fixed: added backticks and quotes
     to: email,
     // Subject of Email
     subject: "Email Verification",

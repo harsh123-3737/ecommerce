@@ -9,9 +9,10 @@ function VerifyEmail() {
 
   const verifyEmail = async () => {
     try {
-      const res = await axios.get(
+      const res = await axios.post(
         `${import.meta.env.VITE_URL}/user/verify`,
-        { params: { token } }
+        { token },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       if (res.data.success || res.data.sucess) {
         setStatus("✅ Email Verified Successfully");

@@ -13,12 +13,17 @@ export const verifyEmail = async (token, email) => {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
     },
-    // FORCE IPV4 HERE
+    // 1. Force IPv4 to prevent ENETUNREACH
     family: 4,
+    // 2. Increase timeouts significantly for Render's slow cold-starts
+    connectionTimeout: 20000, // 20 seconds
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
+    // 3. Prevent SSL certificate issues on cloud clusters
     tls: {
       rejectUnauthorized: false,
+      minVersion: "TLSv1.2",
     },
-    connectionTimeout: 10000,
   });
 
   const mailConfigurations = {

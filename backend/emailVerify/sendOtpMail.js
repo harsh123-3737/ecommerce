@@ -6,22 +6,15 @@ dotenv.config();
 export const sendOtpMail = async (otp, email) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 587,
+    port: 2525, // Try 2525 instead of 587
     secure: false,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
     },
-    // 1. THIS IS MANDATORY FOR RENDER: Force IPv4
     family: 4,
-    // 2. Add timeouts to prevent the server from hanging
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    tls: {
-      rejectUnauthorized: false,
-    },
+    connectionTimeout: 20000,
   });
-
   const mailConfigurations = {
     from: `"EcoFriendly Support" <${process.env.MAIL_USER}>`,
     to: email,

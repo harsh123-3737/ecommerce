@@ -15,10 +15,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      /\.vercel\.app$/, // allow all Vercel preview + production URLs
-    ],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://ecommerce-three-zeta-53.vercel.app/", // 👈 ADD YOUR ACTUAL VERCEL URL HERE
+      ];
+
+      // Allow requests with no origin (like mobile apps or curl)
+      // or check if it's in our allowed list or matches vercel.app
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],

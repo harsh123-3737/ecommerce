@@ -1,17 +1,15 @@
-import * as Brevo from "@getbrevo/brevo";
+import Brevo from "@getbrevo/brevo";
 
 export const verifyEmail = async (token, email) => {
-  // 1. Initialize the API Client
-  let defaultClient = Brevo.ApiClient.instance;
-
-  // 2. Configure API Key
-  let apiKey = defaultClient.authentications["api-key"];
-  apiKey.apiKey = process.env.BREVO_PASS;
-
-  // 3. Create the Transactional Email Instance
+  // Use the standard class-based initialization
   const apiInstance = new Brevo.TransactionalEmailsApi();
 
-  // 4. Set up the email content
+  // Configure the API Key directly on the instance's authenticator
+  apiInstance.setApiKey(
+    Brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_PASS,
+  );
+
   const sendSmtpEmail = new Brevo.SendSmtpEmail();
   sendSmtpEmail.subject = "Verify Your EcoFriendly Account";
   sendSmtpEmail.htmlContent = `<html><body><h1>Welcome!</h1><a href="${process.env.FRONTEND_URL}/verify/${token}">Click here to verify your account</a></body></html>`;
@@ -23,10 +21,14 @@ export const verifyEmail = async (token, email) => {
 
   try {
     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log("Brevo API success:", data.body);
+    console.log("Brevo API Success:", data.body);
     return true;
   } catch (error) {
-    console.error("Brevo API Error:", error.message);
+    // This catches the error without crashing the server
+    console.error(
+      "Brevo API Error:",
+      error.response ? error.response.text : error.message,
+    );
     return false;
   }
 };

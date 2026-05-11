@@ -5,30 +5,34 @@ dotenv.config();
 
 export const sendOtpMail = async (otp, email) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 2525, // Try 2525 instead of 587
-    secure: false,
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false, // TLS
     auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      user: process.env.BREVO_USER, // Your Brevo login email
+      pass: process.env.BREVO_PASS, // Your Brevo SMTP Key
     },
-    family: 4,
-    connectionTimeout: 20000,
   });
+
   const mailConfigurations = {
-    from: `"EcoFriendly Support" <${process.env.MAIL_USER}>`,
+    from: `"EcoFriendly Support" <${process.env.BREVO_USER}>`,
     to: email,
     subject: "OTP Verification",
-    html: `<p>Your OTP for password reset is <b>${otp}</b></p>`,
+    html: `
+      <div style="font-family: sans-serif; text-align: center;">
+        <h2>Password Reset OTP</h2>
+        <p>Use the code below to reset your password. It is valid for 10 minutes.</p>
+        <h1 style="color: #10b981; letter-spacing: 5px;">${otp}</h1>
+      </div>
+    `,
   };
 
-  // 3. Use Try/Catch instead of Throw for a stable server
   try {
     const info = await transporter.sendMail(mailConfigurations);
     console.log("OTP Sent Successfully:", info.messageId);
     return true;
   } catch (error) {
-    console.error("Nodemailer Fix Attempt Failed:", error.message);
+    console.error("Brevo OTP Error:", error.message);
     return false;
   }
 };

@@ -1,31 +1,51 @@
 import * as Brevo from "@getbrevo/brevo";
 
 export const sendOtpMail = async (otp, email) => {
-  // Access TransactionalEmailsApi through the namespace
-  const apiInstance = new Brevo.TransactionalEmailsApi();
+  // 1. SAFE CONSTRUCTOR ACCESS (Fixes the "is not a constructor" error)
+  const ApiInstance =
+    Brevo.TransactionalEmailsApi || Brevo.default.TransactionalEmailsApi;
+  const SendSmtpEmail = Brevo.SendSmtpEmail || Brevo.default.SendSmtpEmail;
+  const ApiKeys =
+    Brevo.TransactionalEmailsApiApiKeys ||
+    Brevo.default.TransactionalEmailsApiApiKeys;
 
-  // Configure API Key
+  const apiInstance = new ApiInstance();
+
+  // 2. CONFIGURATION (Check your Render Env Variable name!)
   apiInstance.setApiKey(
-    Brevo.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_PASS,
+    ApiKeys.apiKey,
+    process.env.BREVO_API_KEY, // Ensure this matches the name in Render Dashboard
   );
 
-  const sendSmtpEmail = new Brevo.SendSmtpEmail();
+  const sendSmtpEmail = new SendSmtpEmail();
 
   sendSmtpEmail.subject = "Your EcoFriendly OTP Code";
-  sendSmtpEmail.htmlContent = `<html><body><h1>Your OTP is ${otp}</h1></body></html>`;
+  sendSmtpEmail.htmlContent = `
+    <div style="font-family: sans-serif; text-align: center; padding: 20px;">
+      <h2 style="color: #10b981;">Verification Code</h2>
+      <p>Your OTP for account access is:</p>
+      <h1 style="letter-spacing: 5px; background: #f4f4f4; display: inline-block; padding: 10px;">${otp}</h1>
+      <p>Valid for 10 minutes.</p>
+    </div>
+  `;
+
   sendSmtpEmail.sender = {
     name: "EcoFriendly Support",
-    email: process.env.BREVO_USER,
+    email: process.env.BREVO_USER, // Must be your verified Brevo sender email
   };
   sendSmtpEmail.to = [{ email: email }];
 
   try {
     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    // Note: use data.body.messageId for the Brevo SDK
     console.log("OTP Sent via API. ID:", data.body.messageId);
     return true;
   } catch (error) {
-    console.error("Brevo API Error:", error.message);
+    // 3. LOGGING (Captures the actual reason if it fails)
+    console.error(
+      "Brevo API Error:",
+      error.response ? error.response.text : error.message,
+    );
     return false;
   }
 };

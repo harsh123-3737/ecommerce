@@ -1,5 +1,4 @@
-import Brevo from "@getbrevo/brevo";
-
+import * as Brevo from "@getbrevo/brevo";
 export const verifyEmail = async (token, email) => {
   // Use the standard class-based initialization
   const apiInstance = new Brevo.TransactionalEmailsApi();

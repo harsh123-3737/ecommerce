@@ -6,6 +6,18 @@ import { Session } from "../models/sessionModels.js";
 import { sendOtpMail } from "../emailVerify/sendOtpMail.js";
 import cloudinary from "../utils/cloudinary.js";
 
+const sendVerificationEmail = async (user, email) => {
+  const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+    expiresIn: "10m",
+  });
+
+  user.token = token;
+  await user.save();
+  await verifyEmail(token, email);
+
+  return token;
+};
+
 export const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -17,6 +29,30 @@ export const register = async (req, res) => {
     }
     const user = await User.findOne({ email });
     if (user) {
+      if (!user.isVerified) {
+        try {
+          await sendVerificationEmail(user, email);
+        } catch (emailError) {
+          console.error("Verification email failed:", emailError);
+          return res.status(502).json({
+            success: false,
+            message:
+              "Account already exists, but verification email could not be sent. Please try again.",
+          });
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: "Verification email sent. Please check your inbox.",
+          user: {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          },
+        });
+      }
+
       return res.status(400).json({
         success: false,
         message: "User Already Exists",
@@ -29,14 +65,9 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, {
-      expiresIn: "10m",
-    });
-    newUser.token = token;
-    await newUser.save();
 
     try {
-      await verifyEmail(token, email);
+      await sendVerificationEmail(newUser, email);
     } catch (emailError) {
       console.error("Verification email failed:", emailError);
       return res.status(502).json({
@@ -123,18 +154,13 @@ export const reVerify = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
-        sucess: false,
+        success: false,
         message: "User not Found",
       });
     }
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "10m",
-    });
-    user.token = token;
-    await user.save();
 
     try {
-      await verifyEmail(token, email);
+      await sendVerificationEmail(user, email);
     } catch (emailError) {
       console.error("Verification email failed:", emailError);
       return res.status(502).json({
@@ -152,7 +178,6 @@ export const reVerify = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
       },
-      token: user.token,
     });
   } catch (error) {
     return res.status(500).json({

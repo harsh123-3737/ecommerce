@@ -1,30 +1,7 @@
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const createGmailTransporter = () => {
-  if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
-    throw new Error("MAIL_USER and MAIL_PASS must be configured");
-  }
-
-  return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    family: 4,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
-};
+import { sendMail } from "./mailer.js";
 
 export const sendOtpMail = async (otp, email) => {
-  const transporter = createGmailTransporter();
-
-  const mailConfigurations = {
-    from: `"EcoFriendly" <${process.env.MAIL_USER}>`,
+  const info = await sendMail({
     to: email,
     subject: "OTP Verification",
     html: `
@@ -35,9 +12,7 @@ export const sendOtpMail = async (otp, email) => {
         <p>This OTP will expire soon.</p>
       </div>
     `,
-  };
+  });
 
-  const info = await transporter.sendMail(mailConfigurations);
-  console.log("OTP Sent Successfully:", info.response);
   return info;
 };

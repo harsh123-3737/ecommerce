@@ -18,11 +18,28 @@ const createTransporters = () => {
 
   if (process.env.MAIL_USER && process.env.MAIL_PASS) {
     transporters.push({
-      name: "gmail",
+      name: "gmail-587",
       transporter: nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
         secure: false,
+        family: 4,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 20000,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      }),
+    });
+
+    transporters.push({
+      name: "gmail-465",
+      transporter: nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         family: 4,
         connectionTimeout: 15000,
         greetingTimeout: 15000,

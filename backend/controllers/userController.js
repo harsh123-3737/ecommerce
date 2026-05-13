@@ -5,8 +5,7 @@ import { verifyEmail } from "../emailVerify/verifyEmail.js";
 import { Session } from "../models/sessionModels.js";
 import { sendOtpMail } from "../emailVerify/sendOtpMail.js";
 import cloudinary from "../utils/cloudinary.js";
-import { resolve } from "dns";
-import { rejects } from "assert";
+
 export const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -33,9 +32,20 @@ export const register = async (req, res) => {
     const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, {
       expiresIn: "10m",
     });
-    verifyEmail(token, email); //send Email here
     newUser.token = token;
     await newUser.save();
+
+    try {
+      await verifyEmail(token, email);
+    } catch (emailError) {
+      console.error("Verification email failed:", emailError);
+      return res.status(502).json({
+        success: false,
+        message:
+          "Account created, but verification email could not be sent. Please try resend verification.",
+      });
+    }
+
     return res.status(201).json({
       success: true,
       message: "User Registered Successfully",
@@ -120,9 +130,19 @@ export const reVerify = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
       expiresIn: "10m",
     });
-    verifyEmail(token, email);
     user.token = token;
     await user.save();
+
+    try {
+      await verifyEmail(token, email);
+    } catch (emailError) {
+      console.error("Verification email failed:", emailError);
+      return res.status(502).json({
+        success: false,
+        message: "Verification email could not be sent. Please try again.",
+      });
+    }
+
     return res.status(200).json({
       success: true,
       message: "Verification Email Sent again Successfullt",
@@ -252,12 +272,16 @@ export const forgotPassword = async (req, res) => {
 
     user.otp = otp;
     user.otpExpiry = otpExpiry;
-    await user.save(); // WRAP THIS IN TRY-CATCH
+    await user.save();
 
     try {
       await sendOtpMail(otp, email);
     } catch (emailError) {
-      console.error("Email service failed:", emailError.message); // We still return 200 because the OTP is saved, but we warn the dev
+      console.error("OTP email failed:", emailError);
+      return res.status(502).json({
+        success: false,
+        message: "OTP email could not be sent. Please try again.",
+      });
     }
 
     return res.status(200).json({

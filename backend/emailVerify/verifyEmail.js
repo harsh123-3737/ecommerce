@@ -3,20 +3,28 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const verifyEmail = async (token, email) => {
-  const transporter = nodemailer.createTransport({
+const createGmailTransporter = () => {
+  if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
+    throw new Error("MAIL_USER and MAIL_PASS must be configured");
+  }
+
+  return nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
-    family: 4, // IMPORTANT
+    family: 4,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
     },
   });
+};
+
+export const verifyEmail = async (token, email) => {
+  const transporter = createGmailTransporter();
 
   const mailConfigurations = {
-    from: process.env.MAIL_USER,
+    from: `"EcoFriendly" <${process.env.MAIL_USER}>`,
     to: email,
     subject: "Verify Your EcoFriendly Account",
     text: `Hi! There,
@@ -27,10 +35,7 @@ ${process.env.FRONTEND_URL}/verify/${token}
 The EcoFriendly Team`,
   };
 
-  try {
-    const info = await transporter.sendMail(mailConfigurations);
-    console.log("Verification Email Sent:", info.response);
-  } catch (error) {
-    console.error("Gmail Service Error:", error);
-  }
+  const info = await transporter.sendMail(mailConfigurations);
+  console.log("Verification Email Sent:", info.response);
+  return info;
 };
